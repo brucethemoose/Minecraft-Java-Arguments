@@ -118,7 +118,9 @@ Proactive ZGC is great for high memory/high core count servers. It has no server
 -XX:+UseZGC -XX:AllocatePrefetchStyle=1 -XX:-ZProactive
 ```
 
-Unfortunately, it has a significant client FPS hit on my (8-core/16 thread) laptop. See the "ZGC" benchmark in the benchmarks folder. Its not available in Java 8, and much less performant in Java 11 than in Java 17.
+Unfortunately, it has a significant client FPS hit on my (8-core/16 thread) laptop. See the "ZGC" benchmark in the benchmarks folder.
+
+> Note: Proactive ZGC is unavailable in Java 8 and much less performant in Java 11 than Java 17+.
 
 > Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC, also note that ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
