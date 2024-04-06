@@ -1,111 +1,33 @@
 This is a guide to tune Java for Minecraft. Every flag and tweak is individually benchmarked to test for regressions, and checked against Java defaults to avoid redundancy.
 
-While these tweaks notably reduce some server and client stutters, expect only modest TPS gains + minimal FPS gains at best, and somewhat increased RAM + CPU usage. And they are no substitute for clearing laggy things out with mods like [Spark](https://spark.lucko.me/docs/guides/Finding-lag-spikes) or [Observable](https://github.com/tasgon/observable). 
+While these tweaks notably reduce some server and client stutters, expect only modest TPS gains + minimal FPS gains at best, and somewhat increased RAM + CPU usage. And they are no substitute for clearing laggy things out with mods like <ins>Spark</ins> or <ins>Observable</ins>.
+
+<ins>Spark Downloads:</ins> [Spark's Website](https://spark.lucko.me/download) or [Modrinth](https://modrinth.com/mod/spark) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/spark)
+
+<ins>Observable Downloads:</ins> [Modrinth](https://modrinth.com/mod/observable) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/observable)
 
 Discord for questions and such: https://discord.gg/zeFSR9PnUw, also feel free to make an issue.
 
-## Downloads for Spark & Observable:
-Spark: [Spark's Website](https://spark.lucko.me/download) or [Modrinth](https://modrinth.com/mod/spark) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/spark)
-
-Observable: [Modrinth](https://modrinth.com/mod/observable) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/observable)
-
-<br />
 <br />
 
 TL:DR
 ======
-### Client: 
-| JREs:        | 
-| ------------ | 
-| Adoptium 17  | 
-| GraalVM 17   |
+### JRES & Garbage Collecters
+Clients should use Adoptium or GraalVM JRES and G1GC or Shenandoah Garbage Collectors.
+Servers can use Adoptium, Clear Linux, or GraalVM JRES with G1GC or ZGC Garbage Collectors.
 
-| Garbage Collectors: |
-| ------------------- | 
-| G1GC                |
-| Shenandoah          |
-
-### Server: 
-| JREs:          |
-| -------------- |
-| Adoptium |
-| Clear Linux 17 |
-| GraalVM 17     |
-
-| Garbage Collectors: |
-| ------------------- | 
-| G1GC                |
-| ZGC                 |
-
-<br />
-
-Don't forget to add memory arguments and if you are on Linux you can also use Large Pages. 
-
+### Extra Arguments
+Don't forget memory arguments and maybe large pages if you are on linux.
 **<ins>DO NOT USE</ins> Large Pages on windows unless you understand the risks associated, more information in the [Large Pages](#large-pages) section**
 
-Don't forget Performance Mods! [Performance Mods](#performance-mods)
+Finally, don't forget Performance Mods! [Performance Mods](#performance-mods)
 
-<br />
-<br />
-
-Benchmarks
-======
-
-~~All flags are tested with Benchmark.py script. See the work-in-progress [Benchmarks.md](https://github.com/brucethemoose/Minecraft-Performance-Flags-Benchmarks/blob/main/Benchmarks.md).~~
-
-Note: I do not test my flags anymore for reasons, though they still are very similar to @brucethemoose's
-
-<br/>
-
-Launchers
-======
-It is important to note that the launcher you use may influence the behavior of how you input your java arguments/flags. 
-
-### Linux
+### Linux Note
 When using Linux with Flathub's Prism Launcher your default permissions may prevent the launcher from accessing your entire custom Java directory which may cause the Java executable to fail to launch.
 
 In order to fix this, you must use Flatseal, or you can manually change the permissions, so that Prism launcher can access the entire directory of where you put Java.
 
-<br/>
-
-Picking a Java Runtime
-======
-Java runtimes from Azul, Microsoft, Adoptium, Amazon and so on are basically identical. Some notable exceptions:
-
-- **Oracle GraalVM** features a more aggressive Java compiler. This is what I personally run Minecraft with, see the GraalVM section below.
-
-- **Intel's Clear Linux OpenJDK** uses the same code as any other OpenJDK (making it highly compatible), but the build process itself and the dependencies are [optimized for newer CPUs](https://www.phoronix.com/review/zen4-clear-linux/2). Grab it from Clear Linux's repos via `swupd`, from [Distrobox](https://github.com/89luca89/distrobox), or from [Docker](https://hub.docker.com/r/clearlinux/openjdk). Note that you must roll back to the Java 17 release, and that Java 18 [reverts some of the performance enhancements](https://github.com/clearlinux-pkgs/openjdk/commit/14202e83f919643031cfb7a6318b067310be90f1). 
-
-- **Azul's Prime OpenJDK** is *very* fast since it hooks into llvm, but its currently incompatible with most mods and is linux-only. Get it from here: https://docs.azul.com/prime/prime-quick-start-tar
-
-- **Red Hat Java 8** has the Shenandoah garbage collector. You can download it by going to [Adoptium Marketplace](https://adoptium.net/marketplace/), swapping java version to "8 - LTS", and downloading the Red Hat Build.
-
-- **IBM's OpenJ9** is... *much* slower in Minecraft, and uses totally different flags than any other Java build, but it does consume less memory than OpenJDK-based runtimes. See [FAQ](#FAQ), the [Benchmarks folder](Benchmarks), and [this Gist for low memory consumption flags](https://gist.github.com/FluffyFoxUwU/69f8f156feefae3d826ad0d15c694002).
-
-If you dont know what to pick, I recommend GraalVM 17 (see below) or the latest Adoptium Java 17 JRE: https://adoptium.net/
-
-You can also go here for recommendations: https://whichjdk.com - Though it says to use Java 21, use the list below to ensure Minecraft runs correctly, this website is for general advice on JDKs, it is not made specifically for Minecraft
-- **Minecraft 1.17 and above require Java 17 to run correctly**
-- **Minecraft 1.16 mods may work with Java versions above 8 but the base game will run just fine**
-- **Minecraft 1.15 and below require Java 8 to run correctly**
-
 <br />
-
-~~Couleur also maintains a good (but somewhat outdated) running list of JREs here: https://rentry.co/JREs~~ 
-> Sadly, It got removed, here's a wayback machine link if you need it: https://web.archive.org/web/20231023145734/https://rentry.co/JREs
-<br/>
-
-Base Java Flags
-======
-These optimized flags run with any Java 11+ build. They work on both servers and clients:
-
-
-```
--XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=400M -XX:NonNMethodCodeHeapSize=12M -XX:ProfiledCodeHeapSize=194M -XX:NonProfiledCodeHeapSize=194M -XX:-DontCompileHugeMethods -XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000 -XX:+UseVectorCmov -XX:+PerfDisableSharedMem -XX:+UseFastUnorderedTimeStamps -XX:+UseCriticalJavaThreadPriority -XX:ThreadPriorityPolicy=1 -XX:AllocatePrefetchStyle=3
-```
-
-**You *must* add garbage collection flags to these java arguments.**  
-
 
 <details>
     <summary>For example, if we were to use Java 21 with GraalVM's Java Arguments and G1GC, it would something look like this:</summary>
@@ -119,6 +41,54 @@ These optimized flags run with any Java 11+ build. They work on both servers and
 
 
 </details>
+
+<br />
+
+Benchmarks
+======
+
+~~All flags are tested with Benchmark.py script. See the work-in-progress [Benchmarks.md](https://github.com/brucethemoose/Minecraft-Performance-Flags-Benchmarks/blob/main/Benchmarks.md).~~
+
+Note: I (@Mukul1127) am not testing my flags, though they still are very similar to @brucethemoose's
+
+<br/>
+
+Picking a Java Runtime
+======
+Java runtimes from Azul or Microsoft, Adoptium, Amazon and so on are all basically identical as they are based on OpenJDK. Some notable exceptions:
+
+- **Oracle GraalVM** features a more aggressive Java compiler. This is what I personally run Minecraft with, see the GraalVM section below.
+
+- **Intel's Clear Linux OpenJDK** uses the same code as any other OpenJDK (making it highly compatible), but the build process itself and the dependencies are [optimized for newer CPUs](https://www.phoronix.com/review/zen4-clear-linux/2). Grab it from Clear Linux's repos via `swupd`, from [Distrobox](https://github.com/89luca89/distrobox), or from [Docker](https://hub.docker.com/r/clearlinux/openjdk). <ins>Note</ins> that you must roll back to the Java 17 release, and that Java 18 [reverts some of the performance enhancements](https://github.com/clearlinux-pkgs/openjdk/commit/14202e83f919643031cfb7a6318b067310be90f1). 
+
+- **Azul's Prime OpenJDK** is *very* fast since it hooks into llvm, but its currently incompatible with most mods and is linux-only. Get it from here: https://docs.azul.com/prime/prime-quick-start-tar
+
+- **Red Hat Java 8** has the Shenandoah garbage collector. You can download it by going to [Adoptium Marketplace](https://adoptium.net/marketplace/), swapping java version to "8 - LTS", and downloading the Red Hat Build.
+
+- **IBM's OpenJ9** is... *much* slower in Minecraft, and uses totally different flags than any other Java build, but it does consume less memory than OpenJDK-based runtimes. See [FAQ](#FAQ), the [Benchmarks folder](Benchmarks), and [this Gist for low memory consumption flags](https://gist.github.com/FluffyFoxUwU/69f8f156feefae3d826ad0d15c694002).
+
+If you dont know what to pick, I recommend GraalVM 17 or 21 (see below) or the latest Adoptium Java 17 or 21 JRE: https://adoptium.net/
+
+You can also go here for recommendations: https://whichjdk.com - Though it says to use Java 21, use the list below to ensure Minecraft runs correctly, this website is for general advice on JDKs, it is not made specifically for Minecraft
+- **Minecraft 1.17 and above require Java 17+ to run correctly**
+- **Minecraft 1.16 mods may work with Java 8 but the base game will run on Java 17+**
+- **Minecraft 1.15 and below requires Java 8 to run correctly**
+
+<br />
+
+~~Couleur also maintains a good (but somewhat outdated) running list of JREs here: https://rentry.co/JREs~~ 
+> Sadly, It got removed, here's a wayback machine link if you need it: https://web.archive.org/web/20231023145734/https://rentry.co/JREs
+<br/>
+
+Base Java Flags
+======
+These optimized flags run with any Java 11+ build. They work on both servers and clients:
+
+```
+-XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=400M -XX:NonNMethodCodeHeapSize=12M -XX:ProfiledCodeHeapSize=194M -XX:NonProfiledCodeHeapSize=194M -XX:-DontCompileHugeMethods -XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000 -XX:+UseVectorCmov -XX:+PerfDisableSharedMem -XX:+UseFastUnorderedTimeStamps -XX:+UseCriticalJavaThreadPriority -XX:ThreadPriorityPolicy=1 -XX:AllocatePrefetchStyle=3
+```
+
+**You *must* add garbage collection flags to these java arguments.**  
 
 <br/>
 
@@ -164,7 +134,7 @@ Shenandoah performs well on clients, but kills server throughput in my tests. En
 
 See more tuning options [here](https://wiki.openjdk.org/display/shenandoah/Main). The "herustic" and "mode" options don't change much for me (except for "compact," which you should not use). 
 
-> Note:  that Shenandoah is not in Java 8. Its also not in any Oracle Java builds! If you are a Java 8 user, you must use Red Hat OpenJDK to use Shenandoah. Like ZGC, Shenandoah does not like AllocatePrefetchStyle=3.
+> Note: Shenandoah is not in Java 8. Its also not in any Oracle Java builds! If you are a Java 8 user, you must use Red Hat OpenJDK to use Shenandoah. Like ZGC, Shenandoah does not like AllocatePrefetchStyle=3.
 
 Download Links:
  - [Red Hat Developer](https://developers.redhat.com/products/openjdk/download)
