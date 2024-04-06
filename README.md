@@ -63,7 +63,7 @@ Java runtimes from Azul or Microsoft, Adoptium, Amazon and so on are all basical
 
 - **Azul's Prime OpenJDK** is *very* fast since it hooks into llvm, but its currently incompatible with most mods and is linux-only. Get it from here: https://docs.azul.com/prime/prime-quick-start-tar
 
-- **Red Hat Java 8** has the Shenandoah garbage collector. You can download it by going to [Adoptium Marketplace](https://adoptium.net/marketplace/), swapping java version to "8 - LTS", and downloading the Red Hat Build.
+- **Red Hat Java 8** has the Shenandoah garbage collector. You can download it by going to [Adoptium Marketplace](https://adoptium.net/marketplace/), swapping java version to "8 - LTS", and downloading the Red Hat Build or from [Red Hat Developer](https://developers.redhat.com/products/openjdk/download).
 
 - **IBM's OpenJ9** is... *much* slower in Minecraft, and uses totally different flags than any other Java build, but it does consume less memory than OpenJDK-based runtimes. See [FAQ](#FAQ), the [Benchmarks folder](Benchmarks), and [this Gist for low memory consumption flags](https://gist.github.com/FluffyFoxUwU/69f8f156feefae3d826ad0d15c694002).
 
@@ -111,9 +111,9 @@ Garbage Collection
 
 <br/>
 
-### ZGC 
+### Proactive ZGC 
 
-ZGC is great for high memory/high core count servers. It has no server throughput hit I can measure, and absolutely does not stutter. However, it requires more RAM and more cores than other garbage collectors. Enable it with
+Proactive ZGC is great for high memory/high core count servers. It has no server throughput hit I can measure, and absolutely does not stutter. However, it requires more RAM and more cores than other garbage collectors. Enable it with
 ```
 -XX:+UseZGC -XX:AllocatePrefetchStyle=1 -XX:-ZProactive
 ```
@@ -122,6 +122,18 @@ Unfortunately, it has a significant client FPS hit on my (8-core/16 thread) lapt
 
 > Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC, also note that ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
+<br/>
+
+### Generational ZGC 
+
+Generational ZGC is new, so no one has really tested it, though I would assume it's similar to Proactive ZGC, except it also runs well on clients. Enable it with
+```
+-XX:+UseZGC -XX:AllocatePrefetchStyle=1 -XX:+ZGenerational
+```
+
+> Note: Generational ZGC is only available in Java 21
+
+> Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC, also note that ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
 <br/>
 
@@ -135,10 +147,6 @@ Shenandoah performs well on clients, but kills server throughput in my tests. En
 See more tuning options [here](https://wiki.openjdk.org/display/shenandoah/Main). The "herustic" and "mode" options don't change much for me (except for "compact," which you should not use). 
 
 > Note: Shenandoah is not in Java 8. Its also not in any Oracle Java builds! If you are a Java 8 user, you must use Red Hat OpenJDK to use Shenandoah. Like ZGC, Shenandoah does not like AllocatePrefetchStyle=3.
-
-Download Links:
- - [Red Hat Developer](https://developers.redhat.com/products/openjdk/download)
- - [Adoptium Marketplace](https://adoptium.net/marketplace/)
 
 <br/>
 
