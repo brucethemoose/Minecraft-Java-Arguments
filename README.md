@@ -126,7 +126,7 @@ Unfortunately, it has a significant client FPS hit on my (8-core/16 thread) lapt
 
 <br/>
 
-### Generational ZGC 
+### Generational ZGC (New and not well tested!)
 
 Generational ZGC is new, so no one has really tested it, though I would assume it's similar to Proactive ZGC, except it also runs well on clients. Enable it with
 ```
