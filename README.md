@@ -221,6 +221,10 @@ GraalVM is a new Java VM from Oracle that can improve the performance of (modded
 
 Download it from [graalvm.org](https://www.graalvm.org/downloads/) or [oracle.com](https://www.oracle.com/java/technologies/downloads/)
 
+> Note: if you are looking for GraalVM 8 or 11, they were dropped before the new GraalVM, you can find the community version on their github and the enterprise version here by selecting a older version of the enterprise channel: https://www.oracle.com/downloads/graalvm-downloads.html
+> - Newest community release with java 8: https://github.com/graalvm/graalvm-ce-builds/releases/tag/vm-21.2.0
+> - Newest community release with java 11: https://github.com/graalvm/graalvm-ce-builds/releases/tag/vm-21.3.3.1
+
 These releases are not Java installers, they are portable zips. You need to unzip and manually replace your launcher's version of Java, or use a Minecraft launcher that supports specifying your Java path. I recommend ATLauncher, Prism Launcher or GDLauncher. When specifying a java path, navigate to the "bin" folder in the GraalVM download and use "javaw.exe" or "java.exe". 
 
 For servers, you need to replace the "java" command in your server start sh/bat file with the full path to graalvm java, in quotes.
