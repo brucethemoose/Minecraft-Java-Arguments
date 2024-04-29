@@ -70,8 +70,9 @@ Java runtimes from Azul or Microsoft, Adoptium, Amazon and so on are all basical
 If you dont know what to pick, I recommend GraalVM 17 or 21 (see below) or the latest Adoptium Java 17 or 21 JRE: https://adoptium.net/
 
 You can also go here for recommendations: https://whichjdk.com - Though it says to use Java 21, use the list below to ensure Minecraft runs correctly, this website is for general advice on JDKs, it is not made specifically for Minecraft
+- **Minecraft 1.20.5 and above require Java 21+ to run correctly**
 - **Minecraft 1.17 and above require Java 17+ to run correctly**
-- **Minecraft 1.16 mods may work with Java 8 but the base game will run on Java 17+**
+- **Minecraft 1.16 mods require Java 8 to run correctly, but Vanilla will run on Java 17+**
 - **Minecraft 1.15 and below requires Java 8 to run correctly**
 
 <br />
