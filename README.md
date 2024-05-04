@@ -16,6 +16,11 @@ TL:DR
 Clients should use Adoptium or GraalVM JRES and G1GC or Shenandoah Garbage Collectors.
 Servers can use Adoptium, Clear Linux, or GraalVM JRES with G1GC or ZGC Garbage Collectors.
 
+ - Minecraft 1.20.5 and above require Java 21+ to run correctly
+ - Minecraft 1.17 and above require Java 17+ to run correctly
+ - Minecraft 1.16 mods require Java 8 to run correctly, but Vanilla will run on Java 17+
+ - Minecraft 1.15 and below requires Java 8 to run correctly
+
 ### Extra Arguments
 Don't forget memory arguments and maybe large pages if you are on linux.
 **<ins>DO NOT USE</ins> Large Pages on windows unless you understand the risks associated, more information in the [Large Pages](#large-pages) section**
