@@ -143,6 +143,8 @@ Generational ZGC is new, so no one has really tested it, though I would assume i
 
 > Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC, also note that ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
+> Note: Generational ZGC doesn't seem to support JVMCI, so it may be slower than Proactive ZGC
+
 <br/>
 
 ### Shenandoah
