@@ -2,28 +2,40 @@ This is a guide to tune Java for Minecraft. Every flag and tweak is individually
 
 While these tweaks notably reduce some server and client stutters, expect only modest TPS gains + minimal FPS gains at best, and somewhat increased RAM + CPU usage. And they are no substitute for clearing laggy things out with mods like <ins>Spark</ins> or <ins>Observable</ins>.
 
-<ins>Spark Downloads:</ins> [Spark's Website](https://spark.lucko.me/download) or [Modrinth](https://modrinth.com/mod/spark) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/spark)
-
-<ins>Observable Downloads:</ins> [Modrinth](https://modrinth.com/mod/observable) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/observable)
+<details>
+ <summary>Download Links</summary>
+ <p>
+  
+  Spark Downloads: [Spark's Website](https://spark.lucko.me/download) or [Modrinth](https://modrinth.com/mod/spark) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/spark)
+  
+  Observable Downloads: [Modrinth](https://modrinth.com/mod/observable) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/observable)
+ </p>
+</details>
 
 Discord for questions and such: https://discord.gg/zeFSR9PnUw, also feel free to make an issue.
+
+*: See [Benchmarks](#benchmarks)
 
 <br />
 
 TL:DR
 ======
-### JRES & Garbage Collecters
-Clients should use Adoptium or GraalVM JRES and G1GC or Shenandoah Garbage Collectors.
-Servers can use Adoptium, Clear Linux, or GraalVM JRES with G1GC or ZGC Garbage Collectors.
+### JREs/JDKs & Garbage Collecters
+Clients should use Adoptium or GraalVM with G1GC or Shenandoah Garbage Collectors.
+Servers can use Adoptium, Clear Linux's OpenJDK, or GraalVM with G1GC or ZGC Garbage Collectors.
 
+### JREs/JDKs versions:
  - Minecraft 1.20.5 and above require Java 21+ to run correctly
  - Minecraft 1.17 and above require Java 17+ to run correctly
  - Minecraft 1.16 mods require Java 8 to run correctly, but Vanilla will run on Java 17+
  - Minecraft 1.15 and below requires Java 8 to run correctly
 
 ### Extra Arguments
-Don't forget memory arguments and maybe large pages if you are on linux.
-**<ins>DO NOT USE</ins> Large Pages on windows unless you understand the risks associated, more information in the [Large Pages](#large-pages) section**
+Once you have the Java flags for your JRE/JDK aswell as your garbage collector, don't forget to add memory arguments and maybe large pages if you are on linux.
+
+> Note: **<ins>DO NOT USE</ins> Large Pages on windows unless you understand the risks associated, more information in the [Large Pages](#large-pages) section**
+
+> Note: If you are using a minecraft launcher like Prism Launcher or ATLauncher, you shouldn't add memory arguments and instead control memory through the dedicated section in the launcher.
 
 Finally, don't forget Performance Mods! [Performance Mods](#performance-mods)
 
@@ -32,19 +44,17 @@ When using Linux with Flathub's Prism Launcher your default permissions may prev
 
 In order to fix this, you must use Flatseal, or you can manually change the permissions, so that Prism launcher can access the entire directory of where you put Java.
 
-<br />
+### Example Java Arguments
 
 <details>
-    <summary>For example, if we were to use Java 21 with GraalVM's Java Arguments and G1GC, it would something look like this:</summary>
+    <summary>If we were to use Java 21 with GraalVM's Java Arguments and G1GC, it would something look like this (If we're using a launcher that doesn't have a dedicated section for memory):</summary>
 
-``
--Xms8G -Xmx8G -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:AllocatePrefetchStyle=3 -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=400M -XX:NonNMethodCodeHeapSize=12M -XX:ProfiledCodeHeapSize=194M -XX:NonProfiledCodeHeapSize=194M -XX:-DontCompileHugeMethods -XX:+PerfDisableSharedMem -XX:+UseFastUnorderedTimeStamps -XX:+UseCriticalJavaThreadPriority -XX:+EagerJVMCI -XX:+UseG1GC -XX:MaxGCPauseMillis=37 -XX:+PerfDisableSharedMem -XX:G1HeapRegionSize=16M -XX:G1NewSizePercent=23 -XX:G1ReservePercent=20 -XX:SurvivorRatio=32 -XX:G1MixedGCCountTarget=3 -XX:G1HeapWastePercent=20 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcMarkStepDurationMillis=5.0 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:GCTimeRatio=99
-``
-
-<b>DONT COPY THESE!</b>
-<b>Please use the [TL:DR](#tl:dr) located above</b>
-
-
+ ``
+ -Xms8G -Xmx8G -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:AllocatePrefetchStyle=3 -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=400M -XX:NonNMethodCodeHeapSize=12M -XX:ProfiledCodeHeapSize=194M -XX:NonProfiledCodeHeapSize=194M -XX:-DontCompileHugeMethods -XX:+PerfDisableSharedMem -XX:+UseFastUnorderedTimeStamps -XX:+UseCriticalJavaThreadPriority -XX:+EagerJVMCI -XX:+UseG1GC -XX:MaxGCPauseMillis=37 -XX:+PerfDisableSharedMem -XX:G1HeapRegionSize=16M -XX:G1NewSizePercent=23 -XX:G1ReservePercent=20 -XX:SurvivorRatio=32 -XX:G1MixedGCCountTarget=3 -XX:G1HeapWastePercent=20 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcMarkStepDurationMillis=5.0 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:GCTimeRatio=99
+ ``
+ 
+ <b>DONT COPY THESE!</b>
+ <b>Please use the TL:DR to make your own</b>
 </details>
 
 <br />
@@ -64,9 +74,9 @@ Java runtimes from Azul or Microsoft, Adoptium, Amazon and so on are all basical
 
 - **Oracle GraalVM** features a more aggressive Java compiler. This is what I personally run Minecraft with, see the GraalVM section below.
 
-- **Intel's Clear Linux OpenJDK** uses the same code as any other OpenJDK (making it highly compatible), but the build process itself and the dependencies are [optimized for newer CPUs](https://www.phoronix.com/review/zen4-clear-linux/2). Grab it from Clear Linux's repos via `swupd`, from [Distrobox](https://github.com/89luca89/distrobox), or from [Docker](https://hub.docker.com/r/clearlinux/openjdk). <ins>Note</ins> that you must roll back to the Java 17 release, and that Java 18 [reverts some of the performance enhancements](https://github.com/clearlinux-pkgs/openjdk/commit/14202e83f919643031cfb7a6318b067310be90f1). 
+- **Intel's Clear Linux OpenJDK** uses the same code as any other OpenJDK (making it highly compatible), but the build process itself and the dependencies are [optimized for newer CPUs](https://www.phoronix.com/review/zen4-clear-linux/2). Grab it from Clear Linux's repos via `swupd`, from [Distrobox](https://github.com/89luca89/distrobox), or from [Docker](https://hub.docker.com/r/clearlinux/openjdk).
 
-- **Azul's Prime OpenJDK** is *very* fast since it hooks into llvm, but its currently incompatible with most mods and is linux-only. Get it from here: https://docs.azul.com/prime/prime-quick-start-tar
+- **Azul's Prime OpenJDK** is *very* fast since it hooks into llvm, but its currently incompatible with most mods and is linux-only. Get it from here: https://docs.azul.com/prime/installation-and-configuration
 
 - **Red Hat Java 8** has the Shenandoah garbage collector. You can download it by going to [Adoptium Marketplace](https://adoptium.net/marketplace/), swapping java version to "8 - LTS", and downloading the Red Hat Build or from [Red Hat Developer](https://developers.redhat.com/products/openjdk/download).
 
@@ -108,6 +118,8 @@ Sizes are set in megabytes (`-Xms4096M`) or gigabytes (`-Xmx8G`)
 
 Allocating too much memory can break gc or just slow Minecraft down, even if you have plenty to spare. Allocating too little can also slow down or break the game. Keep a close eye on the Windows Task manager (or your DE's system monitor) as Minecraft is running, and allocate only as much as it needs (which is usually less than 8G). `sparkc gcmonitor` will tell you if your allocation is too high (the pauses will be too long) or too low (frequent GC with a low memory warning in the notification).
 
+> Note: If you are using a minecraft launcher like Prism Launcher or ATLauncher, you shouldn't add memory arguments and instead control memory through the dedicated section in the launcher.
+
 <br/>
 
 Garbage Collection
@@ -128,22 +140,24 @@ Unfortunately, it has a significant client FPS hit on my (8-core/16 thread) lapt
 
 > Note: Proactive ZGC is unavailable in Java 8 and much less performant in Java 11 than Java 17+.
 
-> Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC, also note that ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
+> Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC.
+
+> Note: ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
 <br/>
 
 ### Generational ZGC (New and not well tested!)
 
-Generational ZGC is new, so no one has really tested it, though I would assume it's similar to Proactive ZGC, except it also runs well on clients. Enable it with
+Generational ZGC is new, so no one has really tested it, though I would assume it's similar to Proactive ZGC, except it also apparently runs well on clients? Enable it with
 ```
 -XX:+UseZGC -XX:AllocatePrefetchStyle=1 -XX:+ZGenerational
 ```
 
 > Note: Generational ZGC is only available in Java 21
 
-> Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC, also note that ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
+> Note: Allocate more RAM and more `ConcGCThreads` than you normally would for other GC.
 
-> Note: Generational ZGC doesn't seem to support JVMCI, so it may be slower than Proactive ZGC
+> Note: ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
 <br/>
 
@@ -156,7 +170,9 @@ Shenandoah performs well on clients, but kills server throughput in my tests. En
 
 See more tuning options [here](https://wiki.openjdk.org/display/shenandoah/Main). The "herustic" and "mode" options don't change much for me (except for "compact," which you should not use). 
 
-> Note: Shenandoah is not in Java 8. Its also not in any Oracle Java builds! If you are a Java 8 user, you must use Red Hat OpenJDK to use Shenandoah. Like ZGC, Shenandoah does not like AllocatePrefetchStyle=3.
+> Note: Shenandoah is not in Oracle Java and most Java 8 builds. If you are a Java 8 user, you must use Red Hat OpenJDK to use Shenandoah.
+
+> Note: Shenandoah does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
 <br/>
 
@@ -169,7 +185,7 @@ These are similar to the aikar flags, but with shorter, more frequent pauses, le
 -XX:+UseG1GC -XX:MaxGCPauseMillis=37 -XX:+PerfDisableSharedMem -XX:G1HeapRegionSize=16M -XX:G1NewSizePercent=23 -XX:G1ReservePercent=20 -XX:SurvivorRatio=32 -XX:G1MixedGCCountTarget=3 -XX:G1HeapWastePercent=20 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcMarkStepDurationMillis=5.0 -XX:GCTimeRatio=99 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:G1ConcRSHotCardLimit=16
 ```
 
-> NOTE: Java 21 depreciated the `G1ConcRefinementServiceIntervalMillis` flag and the `-XX:G1ConcRSHotCardLimit=16` flag, remove them when using Java 21 as they aren't needed
+> NOTE: Java 21 removed support for the `G1ConcRefinementServiceIntervalMillis` flag and the `-XX:G1ConcRSHotCardLimit=16` flag, so you can remove them when using Java 21 as they aren't needed (No issue if they are left in).
 
 > Note: `G1NewSizePercent` and `MaxGCPauseMillis` can be used to tune the frequency/dureation of your young generation collections. `G1HeapWastePercent=18` should be removed if you are getting any old generation pauses on your setup. Alternatively, you can raise it and set `G1MixedGCCountTarget` to 2 or 1 to make mixed garbage collection even lazier (at the cost of higher memory usage). 
 
@@ -183,15 +199,15 @@ Longer pauses are more acceptable on servers. These flags are very close to the 
 -XX:+UseG1GC -XX:MaxGCPauseMillis=130 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=28 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=20 -XX:G1MixedGCCountTarget=3 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcMarkStepDurationMillis=5 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:G1ConcRSHotCardLimit=16
 ```
 
-> NOTE: Java 21 depreciated the `G1ConcRefinementServiceIntervalMillis` flag and the `-XX:G1ConcRSHotCardLimit=16` flag, remove them when using Java 21 as they aren't needed
+> NOTE: Java 21 removed support for the `G1ConcRefinementServiceIntervalMillis` flag and the `-XX:G1ConcRSHotCardLimit=16` flag, so you can remove them when using Java 21 as they aren't needed (No issue if they are left in).
 
 <br/>
 
 ### Garbage Collection Threading
 
-`-XX:ConcGCThreads=[Some Number]` controls the [*maximum* number](https://github.com/openjdk/jdk/blob/dd34a4c28da73c798e021c7473ac57ead56c9903/src/hotspot/share/gc/z/zHeuristics.cpp#L96-L104) of background threads the garbage collector is allowed to use, and defaults to `logical (hyperthreaded) cores / 4`. Recent versions of Java will [reduce the number of gc threads, if needed](https://wiki.openjdk.org/display/zgc/Main#Main-SettingConcurrentGCThreads).
+`-XX:ConcGCThreads=[Some Number]` controls the [*maximum* number](https://github.com/openjdk/jdk/blob/dd34a4c28da73c798e021c7473ac57ead56c9903/src/hotspot/share/gc/z/zHeuristics.cpp#L96-L104) of background threads the garbage collector is allowed to use, and defaults to `number of logical (hyperthreaded) cores / 4`. Recent versions of Java will [reduce the number of gc threads, if needed](https://wiki.openjdk.org/display/zgc/Main#Main-SettingConcurrentGCThreads).
 
-In some cases (especially with ZGC or Shenandoh) you want to increase this thread cap past the default. I recommend `[number of real cores - 2]` on most CPUs, but you may need to play with this parameter. If its too low, garbage collection can't keep up with Minecraft, and the game will stutter and/or start eating gobs of RAM and crash. If its too high, it might slow the game down, especially if you are running Java 8. 
+In some cases (especially with ZGC or Shenandoh) you want to increase this thread cap past the default. I recommend `[number of REAL (non-hyperthreaded) cores - 2]` on most CPUs, but you may need to play with this parameter. If its too low, garbage collection can't keep up with Minecraft, and the game will stutter and/or start eating gobs of RAM and crash. If its too high, it might slow the game down, especially if you are running Java 8. 
 
 No other "threading" flags like `ParallelGCThreads` or `JVMCIThreads` are necessary, as they are enabled by default with good automatic settings in Java 8+.
 
@@ -306,7 +322,7 @@ Performance Mods
 
 This is a **fantastic** repo for finding performance mods: https://github.com/TheUsefulLists/UsefulMods
 
-Instead of Optifine, I would recommend more compatible alternatives like [Sodium](https://modrinth.com/mod/sodium) + [Iris](https://modrinth.com/mod/iris) for Fabric/Quilt and [Embeddium](https://modrinth.com/mod/embeddium) + [Oculus](https://modrinth.com/mod/oculus) for Forge/NeoForge.
+Instead of Optifine, I would recommend more compatible alternatives like [Sodium](https://modrinth.com/mod/sodium) or [Embeddium](https://modrinth.com/mod/embeddium) + [Iris](https://modrinth.com/mod/iris) for Fabric/Quilt and [Embeddium](https://modrinth.com/mod/embeddium) or [Rubidium](https://modrinth.com/mod/rubidium) + [Oculus](https://modrinth.com/mod/oculus) for Forge/NeoForge.
 
 <br/>
 
