@@ -35,14 +35,14 @@ Once you have the Java flags for your JRE/JDK aswell as your garbage collector, 
 
 > Note: **<ins>DO NOT USE</ins> Large Pages on windows unless you understand the risks associated, more information in the [Large Pages](#large-pages) section**
 
-> Note: If you are using a minecraft launcher like Prism Launcher or ATLauncher, you shouldn't add memory arguments and instead control memory through the dedicated section in the launcher.
+> Note: If you are using a third-party Minecraft launcher like Prism Launcher or ATLauncher, you shouldn't add memory arguments and instead control memory through the dedicated section in the launcher.
 
 Finally, don't forget Performance Mods! [Performance Mods](#performance-mods)
 
 ### Linux Note
 When using Linux with Flathub's Prism Launcher your default permissions may prevent the launcher from accessing your entire custom Java directory which may cause the Java executable to fail to launch.
 
-In order to fix this, you must use Flatseal, or you can manually change the permissions, so that Prism launcher can access the entire directory of where you put Java.
+In order to fix this, you must use Flatseal, or you can manually change the permissions, so that Prism Launcher can access the entire directory of where you put Java.
 
 ### Example Java Arguments
 
@@ -76,13 +76,13 @@ Java runtimes from Azul or Microsoft, Adoptium, Amazon and so on are all basical
 
 - **Intel's Clear Linux OpenJDK** uses the same code as any other OpenJDK (making it highly compatible), but the build process itself and the dependencies are [optimized for newer CPUs](https://www.phoronix.com/review/zen4-clear-linux/2). Grab it from Clear Linux's repos via `swupd`, from [Distrobox](https://github.com/89luca89/distrobox), or from [Docker](https://hub.docker.com/r/clearlinux/openjdk).
 
-- **Azul's Prime OpenJDK** is *very* fast since it hooks into llvm, but its currently incompatible with most mods and is linux-only. Get it from here: https://docs.azul.com/prime/installation-and-configuration
+- **Azul's Prime OpenJDK** is *very* fast since it hooks into llvm, but is currently incompatible with most mods and Linux-only. Get it from here: https://docs.azul.com/prime/installation-and-configuration
 
 - **Red Hat Java 8** has the Shenandoah garbage collector. You can download it by going to [Adoptium Marketplace](https://adoptium.net/marketplace/), swapping java version to "8 - LTS", and downloading the Red Hat Build or from [Red Hat Developer](https://developers.redhat.com/products/openjdk/download).
 
 - **IBM's OpenJ9** is... *much* slower in Minecraft, and uses totally different flags than any other Java build, but it does consume less memory than OpenJDK-based runtimes. See [FAQ](#FAQ), the [Benchmarks folder](Benchmarks), and [this Gist for low memory consumption flags](https://gist.github.com/FluffyFoxUwU/69f8f156feefae3d826ad0d15c694002).
 
-If you dont know what to pick, I recommend GraalVM 21 (see below) or Adoptium 21: https://adoptium.net/
+If you dont know what to pick, I recommend GraalVM 21 (see below) or Adoptium 21: https://adoptium.net
 
 You can also go here for recommendations: https://whichjdk.com - Though it says to use Java 21, use the list below to ensure Minecraft runs correctly, this website is for general advice on JDKs, it is not made specifically for Minecraft
 - **Minecraft 1.20.5 and above require Java 21+ to run correctly**
@@ -116,9 +116,9 @@ One exception: if you are on a low-memory system, and Minecraft takes up almost 
 
 Sizes are set in megabytes (`-Xms4096M`) or gigabytes (`-Xmx8G`)
 
-Allocating too much memory can break gc or just slow Minecraft down, even if you have plenty to spare. Allocating too little can also slow down or break the game. Keep a close eye on the Windows Task manager (or your DE's system monitor) as Minecraft is running, and allocate only as much as it needs (which is usually less than 8G). `sparkc gcmonitor` will tell you if your allocation is too high (the pauses will be too long) or too low (frequent GC with a low memory warning in the notification).
+Allocating too much memory can break GC or just slow Minecraft down, even if you have plenty to spare. Allocating too little can also slow down or break the game. Keep a close eye on the Windows Task manager (or your DE's system monitor) as Minecraft is running, and allocate only as much as it needs (which is usually less than 8G). `sparkc gcmonitor` will tell you if your allocation is too high (the pauses will be too long) or too low (frequent GC with a low memory warning in the notification).
 
-> Note: If you are using a minecraft launcher like Prism Launcher or ATLauncher, you shouldn't add memory arguments and instead control memory through the dedicated section in the launcher.
+> Note: If you are using a third-party Minecraft launcher like Prism Launcher or ATLauncher, you shouldn't add memory arguments and instead control memory through the dedicated section in the launcher.
 
 <br/>
 
@@ -180,7 +180,7 @@ See more tuning options [here](https://wiki.openjdk.org/display/shenandoah/Main)
 
 G1GC is the default garbage collector for all JREs. Aikar's [famous Minecraft server G1GC arguments](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/) run great on clients, with two caveats: they effectively [clamp](https://www.oracle.com/technical-resources/articles/java/g1gc.html) the `MaxGCPauseMillis` parameter by setting `G1NewSizePercent` so high, producing long stutters on some clients, and they collect oldgen garbage too aggressively (as the client produces *far* less than a populated server). 
 
-These are similar to the aikar flags, but with shorter, more frequent pauses, less aggressive G1 mixed collection and more aggressive background collection: 
+These are similar to the Aikar flags, but with shorter, more frequent pauses, less aggressive G1 mixed collection and more aggressive background collection: 
 ```
 -XX:+UseG1GC -XX:MaxGCPauseMillis=37 -XX:+PerfDisableSharedMem -XX:G1HeapRegionSize=16M -XX:G1NewSizePercent=23 -XX:G1ReservePercent=20 -XX:SurvivorRatio=32 -XX:G1MixedGCCountTarget=3 -XX:G1HeapWastePercent=20 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcMarkStepDurationMillis=5.0 -XX:GCTimeRatio=99 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:G1ConcRSHotCardLimit=16
 ```
@@ -226,9 +226,9 @@ Enabling large pages improves the performance of Minecraft servers and clients b
 
 
 
-On Windows, you **must** run java, and your launcher, as an administrator. That means checking the ["run as administrator" compatibility checkbox](https://support.sega.com/hc/en-us/articles/201556551-Compatibility-Mode-and-Running-as-Administrator-for-PC-Games) for `javaw.exe`, `java.exe` and `your launcher.exe`, otherwise Large Pages will silently fail. Add `-XX:+UseLargePages -XX:LargePageSizeInBytes=2m` to your arguments.  
+On Windows, you **must** run Java and your launcher as an administrator. That means checking the ["run as administrator" compatibility checkbox](https://support.sega.com/hc/en-us/articles/201556551-Compatibility-Mode-and-Running-as-Administrator-for-PC-Games) for `javaw.exe`, `java.exe` and `your launcher.exe`, otherwise Large Pages will silently fail. Add `-XX:+UseLargePages -XX:LargePageSizeInBytes=2m` to your arguments.  
 
-On linux, you generally want to use `-XX:+UseTransparentHugePages`. To have the kernel automatically allocate memory instead (for a bigger performance boost), Red Hat has a good tutorial for RHEL-like linux distros, like Fedora, CentOS, or Oracle Linux: https://www.redhat.com/en/blog/optimizing-rhel-8-run-java-implementation-minecraft-server 
+On Linux, you generally want to use `-XX:+UseTransparentHugePages`. To have the kernel automatically allocate memory instead (for a bigger performance boost), Red Hat has a good tutorial for RHEL-like linux distros, like Fedora, CentOS, or Oracle Linux: https://www.redhat.com/en/blog/optimizing-rhel-8-run-java-implementation-minecraft-server 
 
 Check and see if large pages is working with the `-Xlog:gc+init` java argument in Java 17. 
 
@@ -245,13 +245,13 @@ GraalVM is a new Java VM from Oracle that can improve the performance of (modded
 
 Download it from [graalvm.org](https://www.graalvm.org/downloads/) or [oracle.com](https://www.oracle.com/java/technologies/downloads/)
 
-> Note: if you are looking for GraalVM 8 or 11, they were dropped before the new GraalVM, you can find the community version on their github and the enterprise version here by selecting a older version of the enterprise channel: https://www.oracle.com/downloads/graalvm-downloads.html
+> Note: if you are looking for GraalVM 8 or 11, they were dropped before the new GraalVM, you can find the community version on their GitHub and the enterprise version here by selecting a older version of the enterprise channel: https://www.oracle.com/downloads/graalvm-downloads.html
 > - Newest community release with java 8: https://github.com/graalvm/graalvm-ce-builds/releases/tag/vm-21.2.0
 > - Newest community release with java 11: https://github.com/graalvm/graalvm-ce-builds/releases/tag/vm-21.3.3.1
 
 These releases are not Java installers, they are portable zips. You need to unzip and manually replace your launcher's version of Java, or use a Minecraft launcher that supports specifying your Java path. I recommend ATLauncher, Prism Launcher or GDLauncher. When specifying a java path, navigate to the "bin" folder in the GraalVM download and use "javaw.exe" or "java.exe". 
 
-For servers, you need to replace the "java" command in your server start sh/bat file with the full path to graalvm java, in quotes.
+For servers, you need to replace the "java" command in your server start sh/bat file with the full path to GraalVM java, in quotes.
 
 Alternatively, you can install it system-wide by following Oracle's guide: https://www.graalvm.org/latest/docs/getting-started/
 
@@ -274,7 +274,7 @@ Arguments for GraalVM Java 17+
 <details>
     <summary>If you run an older, Java 8-based version of GraalVM EE, there are some potential issues:</summary>
 
-    - `VectorizeSIMD` turns entities invisible with shader mods like Optifine, Iris or Occulus... but only under certain conditions. This will be fixed in GraalVM EE 22.3.0. See: https://github.com/oracle/graal/issues/4849
+    - `VectorizeSIMD` turns entities invisible with shader mods like Optifine, Iris or Oculus... but only under certain conditions. This will be fixed in GraalVM EE 22.3.0. See: https://github.com/oracle/graal/issues/4849
     
     - GraalVM CE and EE both break constellation rendering in 1.16.5 Astral Sorcery. This is possibly related to the shader bug. See: https://github.com/HellFirePvP/AstralSorcery/issues/1963
     
@@ -296,7 +296,7 @@ A "universal" Windows mod akin to [ReShade](https://reshade.me/), SpecialK has 2
 
 Download it here: https://wiki.special-k.info/en/SpecialK/Tools
 
-Add your MC launcher, and check the "elevated service" checkbox. Then navigate to your java bin folder where your javaw.exe is, and create an empty file called `SpecialK.OpenGL32`. Launch your Minecraft launcher with the SpecialK launcher, and the launcher will then "inject" SpecialK into Minecraft.
+Add your Minecraft launcher, and check the "elevated service" checkbox. Then navigate to your java bin folder where your javaw.exe is, and create an empty file called `SpecialK.OpenGL32`. Launch your Minecraft launcher with the SpecialK launcher, and the launcher will then "inject" SpecialK into Minecraft.
 ![SpecialK](Tutorial_Images/specialk.PNG)
 
 You can create a desktop shortcut to your Minecraft launcher through the SpecialK UI for even more convenience. 
@@ -322,7 +322,7 @@ Performance Mods
 
 This is a **fantastic** repo for finding performance mods: https://github.com/TheUsefulLists/UsefulMods
 
-Instead of Optifine, I would recommend more compatible alternatives like [Sodium](https://modrinth.com/mod/sodium) or [Embeddium](https://modrinth.com/mod/embeddium) + [Iris](https://modrinth.com/mod/iris) for Fabric/Quilt and [Embeddium](https://modrinth.com/mod/embeddium) or [Rubidium](https://modrinth.com/mod/rubidium) + [Oculus](https://modrinth.com/mod/oculus) for Forge/NeoForge.
+Instead of OptiFine, I would recommend more compatible alternatives like [Sodium](https://modrinth.com/mod/sodium) or [Embeddium](https://modrinth.com/mod/embeddium) + [Iris](https://modrinth.com/mod/iris) for Fabric/Quilt and [Embeddium](https://modrinth.com/mod/embeddium) or [Rubidium](https://modrinth.com/mod/rubidium) + [Oculus](https://modrinth.com/mod/oculus) for Forge/NeoForge. Please note that there are other optimization mods; if you want the highest performance, try [Simply Optimized](https://modrinth.com/modpack/sop)
 
 <br/>
 
@@ -356,15 +356,15 @@ Other Performance Tips
 
 - Run your Minecraft servers on Clear Linux! It's by far the most optimized linux distribution out-of-the-box, and it has some other nice features (like a stateless config system). It also runs clients on AMD/Intel GPUs quite well: https://web.archive.org/web/20220916090057/https://docs.01.org/clearlinux/latest/tutorials/multi-boot/dual-boot-win.html
 
-- Oracle Linux is also a good choice for servers, since its reasonably well optimized out-of-the-box and has Graalvm EE available via the package manager. For clients, Arch-based distros like CachyOS or EndeavorOS are excellent, as they have wide support for most hardware.
+- Oracle Linux is also a good choice for servers, since it's reasonably well optimized out-of-the-box and has GraalVM EE available via the package manager. For clients, Arch-based distros like CachyOS or EndeavorOS are excellent, as they have wide support for most hardware.
 
 - Make sure the Minecraft client is using your discrete GPU! Check the F3 tab, and force Minecraft to use it in the "**Windows Graphics Settings**", *not* the AMD/Nvidia control panel (as they don't seem to work anymore).
 
-- Minecraft client linux users should check out https://github.com/Admicos/minecraft-wayland 
+- Minecraft client Linux users should check out https://github.com/Admicos/minecraft-wayland 
 
 - Close everything in the background, including Discord, game launchers and your browser! Minecraft is resource intensive, and does not like other apps generating CPU interrupts or eating disk I/O, RAM and so on.  
 
-- Server Owners can check this out, [YouHaveTrouble/minecraft-optimization](https://github.com/YouHaveTrouble/minecraft-optimization).
+- Server owners can check this out: [YouHaveTrouble/minecraft-optimization](https://github.com/YouHaveTrouble/minecraft-optimization).
 
 <br/>
 
@@ -389,7 +389,7 @@ Flag Explanations
 ======
 - Aikar G1GC flags are explained here: https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/
 - `-XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions` simply unlock more flags to be used. These can be listed with the `-XX:+PrintFlagsFinal` and `-XX:+JVMCIPrintProperties` flags, see [Flag Dumps](Flag_Dumps)
-- `-XX:G1MixedGCCountTarget=3`: This is how many oldgen gc blocks to target in "mixed" gc. These mixed collections are much slower, and the Minecraft client doesn't generate oldgen very quickly, so we can lower this value to 3, 2, or even 1 for shorter GC pauses.
+- `-XX:G1MixedGCCountTarget=3`: This is how many oldgen GC blocks to target in "mixed" GC. These mixed collections are much slower, and the Minecraft client doesn't generate oldgen very quickly, so we can lower this value to 3, 2, or even 1 for shorter GC pauses.
 - ~~`-XX:+UseNUMA` enables optimizations for multisocket systems, if applicable. Not sure if this applies to MCM CPUs like Ryzen or Epyc, but its auto disabled if not applicable.~~ Thanks to @draeath for explaining why we shouldn't do this as the BIOS may not expose NUMA domains correctly
 - `-XX:-DontCompileHugeMethods` *Allows* huge methods to be compiled. Modded Minecraft has some of these, and we don't care about higher background compiler CPU usage.
 - `-XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000` Enable optimization of larger methods. See: https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8058148
