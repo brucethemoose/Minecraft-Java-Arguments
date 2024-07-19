@@ -228,7 +228,7 @@ Enabling large pages improves the performance of Minecraft servers and clients b
 
 On Windows, you **must** run Java and your launcher as an administrator. That means checking the ["run as administrator" compatibility checkbox](https://support.sega.com/hc/en-us/articles/201556551-Compatibility-Mode-and-Running-as-Administrator-for-PC-Games) for `javaw.exe`, `java.exe` and `your launcher.exe`, otherwise Large Pages will silently fail. Add `-XX:+UseLargePages -XX:LargePageSizeInBytes=2m` to your arguments.  
 
-On Linux, you generally want to use `-XX:+UseTransparentHugePages`. To have the kernel automatically allocate memory instead (for a bigger performance boost), Red Hat has a good tutorial for RHEL-like linux distros, like Fedora, CentOS, or Oracle Linux: https://www.redhat.com/en/blog/optimizing-rhel-8-run-java-implementation-minecraft-server 
+On Linux, you generally want to use `-XX:+UseTransparentHugePages`. To have the kernel automatically allocate memory instead (for a bigger performance boost), Azul has a good guide located [here](https://docs.azul.com/prime/Enable-Huge-Pages) for THP. For Large Pages, Red Hat has a good tutorial for RHEL-like linux distros, like Fedora, CentOS, or Oracle Linux: https://www.redhat.com/en/blog/optimizing-rhel-8-run-java-implementation-minecraft-server 
 
 Check and see if large pages is working with the `-Xlog:gc+init` java argument in Java 17. 
 
