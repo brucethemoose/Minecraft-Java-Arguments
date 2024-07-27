@@ -1,5 +1,3 @@
-Hi! It's me @Mukul1127, I did some re-arranging in this repo: https://github.com/Mukul1127/Minecraft-Java-Flags, is it better or worse?
-
 This is a guide to tune Java for Minecraft. Every flag and tweak is individually benchmarked to test for regressions*, and checked against Java defaults to avoid redundancy*.
 
 While these tweaks notably reduce some server and client stutters, expect only modest TPS gains + minimal FPS gains at best, and somewhat increased RAM + CPU usage. And they are no substitute for clearing laggy things out with mods like <ins>Spark</ins> or <ins>Observable</ins>.
