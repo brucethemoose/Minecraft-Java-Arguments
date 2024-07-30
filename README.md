@@ -159,6 +159,8 @@ Generational ZGC is new, so no one has really tested it, though I would assume i
 
 > Note: ZGC does not like AllocatePrefetchStyle=3, hence setting it to 1 overrides the previous entry.
 
+> Note: GraalVM currently doesn't fully support Generational ZGC as it disables an important optimization (EnableJVMCI)
+
 <br/>
 
 ### Shenandoah
