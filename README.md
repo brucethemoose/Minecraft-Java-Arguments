@@ -271,7 +271,7 @@ Arguments for GraalVM Java 17+
 
 ### GraalVM Mod Compatibility
 
-**GraalVM EE 22.3.0 fixed all known Minecraft bugs**
+**GraalVM 22.3.0 fixed all known Minecraft bugs**
 
 <details>
     <summary>If you run an older, Java 8-based version of GraalVM EE, there are some potential issues:</summary>
