@@ -217,7 +217,7 @@ No other "threading" flags like `ParallelGCThreads` or `JVMCIThreads` are necess
 
 Large Pages
 ======
-**NOTE: Large Pages requires admin privileges on Windows. This is a security risk, and you should skip this section if you aren't comfortable with that.**
+~~**NOTE: Large Pages requires admin privileges on Windows. This is a security risk, and you should skip this section if you aren't comfortable with that.**~~ Update September 21 2024: It seems like it's actually possible to ues large pages on windows without administrator privileges, more details available in the more aggesive version of this guide: https://github.com/Mukul1127/Minecraft-Java-Flags/blob/main/README.md#large-pages
 
 Enabling large pages improves the performance of Minecraft servers and clients by reducing the load on your system. Here are some great tutorials for enabling it:
 
